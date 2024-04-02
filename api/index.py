@@ -8,6 +8,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 PORT = 3000
+ETHERSCAN_API_URL = 'https://api.etherscan.io/api'
 ETHERSCAN_API_KEY = '6H8VRTDHJVS6II983YY3DN8NCVBBHDA3MX' # should be env var, but whatever
 SOLIDITY_TO_BQ_TYPES = {
   'address': 'STRING',
@@ -137,7 +138,7 @@ table_description = ''
 def read_abi_from_address(address):
   a = address.lower()
   k = ETHERSCAN_API_KEY
-  url = f'https://api.etherscan.io/api?module=contract&action=getabi&address={a}&apikey={k}'
+  url = f'{ETHERSCAN_API_URL}?module=contract&action=getabi&address={a}&apikey={k}'
   json_response = get(url).json()
   return loads(json_response['result'])
 
@@ -145,7 +146,7 @@ def read_contract(contract):
   if contract is not None and contract.startswith('0x'):
     a = contract.lower()
     k = ETHERSCAN_API_KEY
-    url = f'https://api.etherscan.io/api?module=contract&action=getsourcecode&address={a}&apikey={k}'
+    url = f'{ETHERSCAN_API_URL}?module=contract&action=getsourcecode&address={a}&apikey={k}'
     json_response = get(url).json()
     contract = [x for x in json_response['result'] if 'ContractName' in x][0]
     return contract
